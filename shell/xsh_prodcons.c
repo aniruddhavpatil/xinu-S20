@@ -18,14 +18,14 @@ shellcmd xsh_prodcons(int nargs, char *args[])
         printf("Usage: prodcons [integer]\n");
     }
     if(nargs == 2){
-        // TODO: Error handling of string count
+        // Error handling of argument
         if (!isValidNumber(args[1])){
-            printf("Argument should be a positive integer in (0, %d]\n", INT_MAX);
+            printf("Argument should be a positive integer from 1 to %d.\n", INT_MAX);
             return 1;
         }
         long temp = atol(args[1]);
         if(temp > INT_MAX || temp <= 0){
-            printf("Argument should be a positive integer in (0, %d]\n", INT_MAX);
+            printf("Argument should be a positive integer from 1 to %d.\n", INT_MAX);
             return 1;
         }
         count = atoi(args[1]);
@@ -43,6 +43,7 @@ int isValidNumber(char *number)
     {
         if (!isdigit(number[i]))
             return 0;
+        // INT_MAX is 10 digits
         if(i > 10){
             return 0;
         }
