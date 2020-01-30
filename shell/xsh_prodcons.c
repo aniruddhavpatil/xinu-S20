@@ -6,9 +6,9 @@
 
 int n; //Definition for global variable 'n'
 /*Now global variable n will be on Heap so it is accessible all the processes i.e. consume and produce*/
+int isValidNumber(char *number);
 
-shellcmd xsh_prodcons(int nargs, char *args[])
-{
+shellcmd xsh_prodcons(int nargs, char *args[]){
     //Argument verifications and validations
     int count = 2000; //local varible to hold count
 
