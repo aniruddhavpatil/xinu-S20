@@ -1,4 +1,4 @@
-Assignment 2 Report
+# Assignment 2 Report
 
 - Does your program output any garbage? If yes, why?
     
@@ -56,13 +56,17 @@ Assignment 2 Report
 - Write down all the functions in the project.
 
     1. shellcmd xsh_prodcons(int nargs, char *args[])
-    Creates the process producer and consumer and put them in ready queue.
+     
+        Creates the process producer and consumer and puts them in ready queue.
     
     2. int isValidNumber(char *number)
-    Helper function to validate whether the given argument is a number less than or equal to INT_MAX represented as a character string.
+        
+        Helper function to validate whether the given argument is a number less than or equal to INT_MAX represented as a character string.
     
     3. void producer(int count)
-    Iterates from 0 to count, setting the value of the global variable 'n' each time.
+        
+        Iterates from 0 to count, setting the value of the global variable 'n' each time.
     
     4. void consumer(int count)
-    Reads the value of the global variable 'n' 'count' times and prints it.
+    
+        Reads the value of the global variable 'n' 'count' times and prints it.
