@@ -7,39 +7,39 @@
 /************************************************************************/
 /* Table of Xinu shell commands and the function associated with each	*/
 /************************************************************************/
-const	struct	cmdent	cmdtab[] = {
-	{"argecho",	TRUE,	xsh_argecho},
-	{"cat",		FALSE,	xsh_cat},
-	{"clear",	TRUE,	xsh_clear},
-	{"date",	FALSE,	xsh_date},
-	{"devdump",	FALSE,	xsh_devdump},
-	{"echo",	FALSE,	xsh_echo},
-	{"exit",	TRUE,	xsh_exit},
-	{"help",	FALSE,	xsh_help},
-	{"hello",	FALSE,	xsh_hello},
-	{"kill",	TRUE,	xsh_kill},
-	{"memdump",	FALSE,	xsh_memdump},
-	{"memstat",	FALSE,	xsh_memstat},
+const struct cmdent cmdtab[] = {
+	{"argecho", TRUE, xsh_argecho},
+	{"cat", FALSE, xsh_cat},
+	{"clear", TRUE, xsh_clear},
+	{"date", FALSE, xsh_date},
+	{"devdump", FALSE, xsh_devdump},
+	{"echo", FALSE, xsh_echo},
+	{"exit", TRUE, xsh_exit},
+	{"help", FALSE, xsh_help},
+	{"hello", FALSE, xsh_hello},
+	{"kill", TRUE, xsh_kill},
+	{"memdump", FALSE, xsh_memdump},
+	{"memstat", FALSE, xsh_memstat},
 	{"prodcons", FALSE, xsh_prodcons},
-	{"ps",		FALSE,	xsh_ps},
-	{"sleep",	FALSE,	xsh_sleep},
-	{"uptime",	FALSE,	xsh_uptime},
+	{"run", FALSE, xsh_run},
+	{"ps", FALSE, xsh_ps},
+	{"sleep", FALSE, xsh_sleep},
+	{"uptime", FALSE, xsh_uptime},
 #ifdef GPIO
-	{"led",         FALSE,  xsh_led},
+	{"led", FALSE, xsh_led},
 #endif
 #ifdef ETHER0
-  {"arp",		FALSE,	xsh_arp},
-  {"ipaddr",	FALSE,	xsh_ipaddr},
-	{"ping",	FALSE,	xsh_ping},
-	{"udp",		FALSE,	xsh_udpdump},
-	{"udpecho",	FALSE,	xsh_udpecho},
-	{"udpeserver",	FALSE,	xsh_udpeserver},
+	{"arp", FALSE, xsh_arp},
+	{"ipaddr", FALSE, xsh_ipaddr},
+	{"ping", FALSE, xsh_ping},
+	{"udp", FALSE, xsh_udpdump},
+	{"udpecho", FALSE, xsh_udpecho},
+	{"udpeserver", FALSE, xsh_udpeserver},
 #endif /* ETHER0 */
 #ifdef MMU
-	{"test_mmu", 	FALSE, 	xsh_mmu},
+	{"test_mmu", FALSE, xsh_mmu},
 #endif /* MMU */
-  {"?",		FALSE,	xsh_help}
-};
+	{"?", FALSE, xsh_help}};
 
 uint32	ncmd = sizeof(cmdtab) / sizeof(struct cmdent);
 
