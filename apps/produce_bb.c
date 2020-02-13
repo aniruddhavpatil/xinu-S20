@@ -9,7 +9,7 @@ void producer_bb(int count)
         // TODO: wait(mutex);
         wait(mutex);
         array_q[write_idx] = i;
-        printf("prod_sem: %d name: %s, write: %d, at: %d\n", producer_sem, proctab[getpid()].prname, i, write_idx);
+        printf("%s \t wrote: %d \t at: %d\n", proctab[getpid()].prname, i, write_idx);
         ++write_idx;
         write_idx %= BUFFER_LENGTH;
         signal(mutex);

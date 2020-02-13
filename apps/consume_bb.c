@@ -8,7 +8,7 @@ void consumer_bb(int32 count)
         wait(consumer_sem);
         wait(mutex);
         int32 consumed_value = array_q[read_idx];
-        printf("con_sem: %d name : %s read: %d, at: %d\n", consumer_sem, proctab[getpid()].prname, consumed_value, read_idx);
+        printf("%s \t read: %d \t at: %d\n", proctab[getpid()].prname, consumed_value, read_idx);
         ++read_idx;
         read_idx %= BUFFER_LENGTH;
         signal(mutex);
