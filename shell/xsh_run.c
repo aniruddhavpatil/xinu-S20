@@ -133,14 +133,9 @@ void future_prodcons(int nargs, char *args[]){
     one = 1;
     two = 2;
 
-    kprintf("Test FUTURE_EXCLUSIVE\n");
-    // Test FUTURE_EXCLUSIVE
     resume(create(future_cons, 1024, 20, "fcons1", 1, f_exclusive));
     resume(create(future_prod, 1024, 20, "fprod1", 2, f_exclusive, (char *)&one));
-    // resume(create(future_prod, 1024, 20, "fprod1", 2, f_exclusive, &a));
 
-    kprintf("Test FUTURE_SHARED\n");
-    // Test FUTURE_SHARED
     resume(create(future_cons, 1024, 20, "fcons2", 1, f_shared));
     resume(create(future_cons, 1024, 20, "fcons3", 1, f_shared));
     resume(create(future_cons, 1024, 20, "fcons4", 1, f_shared));
@@ -149,56 +144,65 @@ void future_prodcons(int nargs, char *args[]){
     return;
 }
 
-// int32 fibfut[];
+future_t** fibfut;
 
-// void future_fibonacci(int nargs, char *args[]){
-//     int fib = -1, i;
+void future_fibonacci(int nargs, char *args[]){
+    int fib = -1, i;
+    nargs--;
+    args++;
+    fib = atoi(args[0]);
+    zero = 0;
+    one = 1;
 
-//     fib = atoi(args[2]);
+    if (fib > -1)
+    {
+        int final_fib;
+        int future_flags = FUTURE_SHARED; // TODO - add appropriate future mode here
 
-//     if (fib > -1)
-//     {
-//         int final_fib;
-//         int future_flags = FUTURE_XXXXXXXXX; // TODO - add appropriate future mode here
+        // create the array of future pointers
+        if ((fibfut = (future_t **)getmem(sizeof(future_t *) * (fib + 1))) == (future_t **)SYSERR)
+        {
+            printf("getmem failed\n");
+            return (SYSERR);
+        }
 
-//         // create the array of future pointers
-//         if ((fibfut = (future_t **)getmem(sizeof(future_t *) * (fib + 1))) == (future_t **)SYSERR)
-//         {
-//             printf("getmem failed\n");
-//             return (SYSERR);
-//         }
+        // get futures for the future array
+        for (i = 0; i <= fib; i++)
+        {
+            if ((fibfut[i] = future_alloc(future_flags, sizeof(int), 1)) == (future_t *)SYSERR)
+            {
+                printf("future_alloc failed\n");
+                return (SYSERR);
+            }
+        }
 
-//         // get futures for the future array
-//         for (i = 0; i <= fib; i++)
-//         {
-//             if ((fibfut[i] = future_alloc(future_flags, sizeof(int), 1)) == (future_t *)SYSERR)
-//             {
-//                 printf("future_alloc failed\n");
-//                 return (SYSERR);
-//             }
-//         }
+        for(i = 0; i <= fib; i++){
+            resume(create(ffib, 1024, 20, "fibo", 1, i));
+        }
 
-//         // spawn fib threads and get final value
-//         // TODO - you need to add your code here
+        future_get(fibfut[fib], (char *)&final_fib);
 
-//         future_get(fibfut[fib], (char *)&final_fib);
+        for (i = 0; i <= fib; i++)
+        {
+            future_free(fibfut[i]);
+        }
 
-//         for (i = 0; i <= fib; i++)
-//         {
-//             future_free(fibfut[i]);
-//         }
-
-//         freemem((char *)fibfut, sizeof(future_t *) * (fib + 1));
-//         printf("Nth Fibonacci value for N=%d is %d\n", fib, final_fib);
-//         return (OK);
-//     }
-// }
+        freemem((char *)fibfut, sizeof(future_t *) * (fib + 1));
+        printf("Nth Fibonacci value for N=%d is %d\n", fib, final_fib);
+        return (OK);
+    }
+}
 
 void futures_test(int nargs, char *args[]){
     args++;
     nargs--;
     if(strncmp("-pc", args[0], 3) == 0){
         resume(create(future_prodcons, 1024, 20, "future_prodcons", 1, NULL));
+    }
+    else if (strncmp("-f", args[0], 2) == 0)
+    {
+
+        resume(create(future_fibonacci, 1024, 20, "future_fibonacci", 2, nargs, args));
     }
     return;
 }

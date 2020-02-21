@@ -34,7 +34,7 @@ syscall future_set(future_t *, char *);
 extern uint future_prod(future_t* fut, char* value);
 extern uint future_cons(future_t* fut);
 extern int ffib(int n);
-extern int32 fibfut[];
+extern future_t** fibfut;
 
 extern int32 zero;
 extern int32 one;
