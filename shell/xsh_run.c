@@ -191,6 +191,9 @@ void future_fibonacci(int nargs, char *args[]){
         printf("Nth Fibonacci value for N=%d is %d\n", fib, final_fib);
         return (OK);
     }
+    else{
+        printf("ERROR: Invalid number given. Please give a non-negative number.\n");
+    }
 }
 
 void futures_test(int nargs, char *args[]){
@@ -203,6 +206,10 @@ void futures_test(int nargs, char *args[]){
     {
 
         resume(create(future_fibonacci, 1024, 20, "future_fibonacci", 2, nargs, args));
+    }
+    else{
+        printf("ERROR: incorrect flags passed.\n");
+        printf("Use -f <number> or -pc.\n");
     }
     return;
 }
