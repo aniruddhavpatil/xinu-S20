@@ -226,6 +226,12 @@ static	void	sysinit()
 	prptr->prstklen = NULLSTK;
 	prptr->prstkptr = 0;
 	currpid = NULLPROC;
+
+  /* Initialize queues */
+  
+  for(i = NPROC; i <= NQENT - 1; i+=2) {
+    queuetab[i].qnext = EMPTY;
+  }
 	
 	/* Initialize semaphores */
 
@@ -236,6 +242,8 @@ static	void	sysinit()
 		semptr->squeue = newqueue();
 	}
 
+
+  
 	/* Initialize buffer pools */
 
 	bufinit();
@@ -243,6 +251,10 @@ static	void	sysinit()
 	/* Create a ready list for processes */
 
 	readylist = newqueue();
+
+	if (ptinit(PTMAXMSG) == SYSERR) {
+		kprintf("ptinit failed\n");
+	}
 
 	/* Initialize the real time clock */
 
