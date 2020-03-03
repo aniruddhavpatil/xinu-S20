@@ -6,9 +6,11 @@
 #include <limits.h>
 #include <ctype.h>
 #include <future.h>
+#include <stream_proc.h>
 
 void prodcons_bb(int nargs, char *args[]);
 void futures_test(int nargs, char *args[]);
+int32 stream_proc(int nargs, char *args[]);
 
 int32 isValidArgument(char *number);
 sid32 producer_sem;
@@ -37,12 +39,19 @@ shellcmd xsh_run(int nargs, char *args[])
     args++;
     nargs--;
 
-    if (strncmp(args[0], "prodcons_bb", 11) == 0){
+// Syntax:
+//     xsh$ run tscdf - s[num of streams] - w[work queue depth] - t[time window] - o[output time]
+
+    if (strncmp(args[0], "prodcons_bb", 11) == 0)
+    {
         /* create a process with the function as an entry point. */
         resume(create((void *)prodcons_bb, 4096, 20, "prodcons_bb", 2, nargs, args));
     }
     else if (strncmp(args[0], "futures_test", 12) == 0) {
         resume(create((void *)futures_test, 4096, 20, "futures_test", 2, nargs, args));
+    }
+    else if (strncmp(args[0], "tscdf", 5) == 0){
+        resume(create((void *)stream_proc, 4096, 20, "stream_proc", 2, nargs, args));
     }
     else{
         printf("Given argument does not match any defined functions.\n");
@@ -213,3 +222,4 @@ void futures_test(int nargs, char *args[]){
     }
     return;
 }
+
