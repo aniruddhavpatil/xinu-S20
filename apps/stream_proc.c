@@ -25,6 +25,8 @@ int32 stream_proc(int nargs, char *args[])
     }
     int32 i, num_streams;
     i = nargs - 1;
+
+    // Iterate through args, while populating options
     while (i > 0)
     {
         char *ch = args[i - 1];
@@ -61,11 +63,8 @@ int32 stream_proc(int nargs, char *args[])
         printf("ptcreate failed\n");
         return (-1);
     }
-    
-    
 
     // Create streams
-
     struct stream** streams = (struct stream**)getmem(sizeof(struct stream*) * num_streams);
     for (int32 i = 0; i < num_streams; i++)
     {
@@ -79,7 +78,6 @@ int32 stream_proc(int nargs, char *args[])
         for(int32 queue_element=0; queue_element < work_queue_depth; queue_element++){
             streams[i]->queue[queue_element] = (de*)getmem(sizeof(de));
         }
-
         // Create consumer processes
         resume(create((void *)stream_consumer, 2048, 20, "consumer", 2, i, streams[i]));
     }
@@ -98,18 +96,25 @@ int32 stream_proc(int nargs, char *args[])
         // Write time_stamp and value to sreams[stream_id]->queue
         struct stream *str = streams[stream_id];
         de *produced_element;
+        // wait for spaces
         wait(str->spaces);
+        // wait for mutex
         wait(str->mutex);
-        produced_element = str->queue[str->head];   
+        produced_element = str->queue[str->head];
+        // populate produced_element
         produced_element->time = time_stamp;
         produced_element->value = value;
+        // increment head
         str->head++;
+        // make sure that the circular queue is maintained
         str->head %= work_queue_depth;
+        // release mutex
         signal(str->mutex);
+        // signal items
         signal(str->items);
     }
 
-
+    // Hear back from all consumers
     for (i = 0; i < num_streams; i++)
     {
         uint32 pm;
@@ -137,10 +142,14 @@ void stream_consumer(int32 id, struct stream *str){
     while(1){
 
         de* consumed_element;
+        // wait for items
         wait(str->items);
+        // wait for mutex
         wait(str->mutex);
+        // extract consumed_element
         consumed_element = str->queue[str->tail];
         upt = tscdf_update(tptr, consumed_element->time, consumed_element->value);
+        // check if consumed_element's time is 0
         if (consumed_element->time == 0){
             // Even though the consumed time is 0, increment tail, release mutex and signal spaces
             str->tail++;
@@ -150,26 +159,34 @@ void stream_consumer(int32 id, struct stream *str){
             break;
         }
 
+        // increment tail
         str->tail++;
+        // make sure that the circular queue is maintained
         str->tail %= work_queue_depth;
+        // increment count
         count++;
         if (upt == SYSERR){
             return SYSERR;
         }
+
         if (count == output_time)
         {
+            // reset count
             count = 0;
+            // clear the output string
             output = "";
+            // get quartile array from tscdf
             qarray = tscdf_quartiles(tptr);
-
+            // check if qarray is NULL
             if (qarray == NULL)
             {
                 kprintf("tscdf_quartiles returned NULL\n");
                 continue;
             }
-
+            // pring the qarray values
             sprintf(output, "s%d: %d %d %d %d %d", id, qarray[0], qarray[1], qarray[2], qarray[3], qarray[4]);
             kprintf("%s\n", output);
+            // free qarray
             freemem((char *)qarray, (6 * sizeof(int32)));
         }
         signal(str->mutex);
