@@ -13,7 +13,6 @@ future_t *future_alloc(future_mode_t mode, uint size, uint nelems){
     fut->mode = mode;
     fut->size = size;
     fut->data = (char*)getmem(size * nelems);
-    // fut->data = ((char *)fut) + sizeof(future_t);
     fut->get_queue = newqueue();
     fut->set_queue = newqueue();
     fut->pid = EMPTY;
@@ -46,36 +45,22 @@ syscall future_set(future_t *f, char *in){
         } while(pid != EMPTY);
     }
     else{
-        // kprintf("SET FUTURE_QUEUE mode\n");
         if(f->count >= f->max_elems){
             enqueue(getpid(), f->set_queue);
-            // kprintf("Suspending prname: %s, f->count: %d, f->max_elems: %d\n",proctab[getpid()].prname, f->count, f->max_elems);
             suspend(getpid());
-            // Do something after waking up
-            // char *tailelemptr = f->data + (f->tail * f->size);
-            // memcpy(tailelemptr, in, f->size);
-            // f->tail++;
-            // f->count++;
-            // f->tail %= f->max_elems;
         }
-        // else{
         char *tailelemptr = f->data + (f->tail * f->size);
         memcpy(tailelemptr, in, f->size);
         f->tail++;
         f->count++;
         f->tail %= f->max_elems;
         pid32 pid = dequeue(f->get_queue);
-        // kprintf("Resumed prname: %s, f->count: %d, f->max_elems: %d\n", proctab[getpid()].prname, f->count, f->max_elems);
-
         if (pid == EMPTY)
         {
             restore(mask);
             return OK;
-            }
-            // kprintf("SET prname: %s, f->count: %d, f->max_elems: %d\n", proctab[getpid()].prname, f->count, f->max_elems);
-
-            resume(pid);
-        // }
+        }
+        resume(pid);
     }
     restore(mask);
     return OK;
@@ -121,38 +106,23 @@ syscall future_get(future_t *f, char *out){
             return OK;
         }
     }
-    // FUTURE_QUEUE mode
     else {
-        // kprintf("GET FUTURE_QUEUE mode\n");
         if(f->count <= 0){
             enqueue(getpid(), f->get_queue);
-            // kprintf("Suspending prname: %s, f->count: %d, f->max_elems: %d\n", proctab[getpid()].prname, f->count, f->max_elems);
             suspend(getpid());
-            // Do something after waking up
-            // char *headelemptr = f->data + (f->head * f->size);
-            // memcpy(out, headelemptr, f->size);
-            // f->head++;
-            // f->count--;
-            // f->head %= f->max_elems;
         }
-        // else{
-
         char *headelemptr = f->data + (f->head * f->size);
         memcpy(out, headelemptr, f->size);
         f->head++;
         f->count--;
         f->head %= f->max_elems;
         pid32 pid = dequeue(f->set_queue);
-        // kprintf("Resumed prname: %s, f->count: %d, f->max_elems: %d\n", proctab[getpid()].prname, f->count, f->max_elems);
-
         if (pid == EMPTY)
         {
             restore(mask);
             return OK;
             }
-            // kprintf("GET prname: %s, f->count: %d, f->max_elems: %d\n", proctab[getpid()].prname, f->count, f->max_elems);
             resume(pid);
-        // }
         restore(mask);
         return OK;
     }
