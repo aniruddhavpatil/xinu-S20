@@ -191,7 +191,7 @@ void stream_consumer_future(int32 id, future_t* fut)
     }
     tscdf_free(tptr);
     future_free(fut);
-    kprintf("process %d exited\n", getpit());
+    kprintf("process %d exited\n", getpid());
     ptsend(pcport, getpid());
     return;
 }
