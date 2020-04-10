@@ -10,7 +10,12 @@
 
 void prodcons_bb(int nargs, char *args[]);
 void futures_test(int nargs, char *args[]);
+void futureq_test1(int nargs, char *args[]);
+void futureq_test2(int nargs, char *args[]);
+void futureq_test3(int nargs, char *args[]);
+
 int32 stream_proc(int nargs, char *args[]);
+int32 stream_proc_futures(int nargs, char *args[]);
 
 int32 isValidArgument(char *number);
 sid32 producer_sem;
@@ -49,6 +54,10 @@ shellcmd xsh_run(int nargs, char *args[])
     }
     else if (strncmp(args[0], "futures_test", 12) == 0) {
         resume(create((void *)futures_test, 4096, 20, "futures_test", 2, nargs, args));
+    }
+    else if (strncmp(args[0], "tscdf_fq", 5) == 0)
+    {
+        resume(create((void *)stream_proc_futures, 4096, 20, "stream_proc_future", 2, nargs, args));
     }
     else if (strncmp(args[0], "tscdf", 5) == 0){
         resume(create((void *)stream_proc, 4096, 20, "stream_proc", 2, nargs, args));
@@ -211,9 +220,19 @@ void futures_test(int nargs, char *args[]){
     if(strncmp("-pc", args[0], 3) == 0){
         resume(create(future_prodcons, 1024, 20, "future_prodcons", 1, NULL));
     }
+    else if (strncmp("-fq1", args[0], 4) == 0){
+        resume(create(futureq_test1, 1024, 20, "fq1", 2, nargs, args));
+    }
+    else if (strncmp("-fq2", args[0], 4) == 0)
+    {
+        resume(create(futureq_test2, 1024, 20, "fq2", 2, nargs, args));
+    }
+    else if (strncmp("-fq3", args[0], 4) == 0)
+    {
+        resume(create(futureq_test3, 1024, 20, "fq3", 2, nargs, args));
+    }
     else if (strncmp("-f", args[0], 2) == 0)
     {
-
         resume(create(future_fibonacci, 1024, 20, "future_fibonacci", 2, nargs, args));
     }
     else{
@@ -223,3 +242,56 @@ void futures_test(int nargs, char *args[]){
     return;
 }
 
+void futureq_test1(int nargs, char *args[])
+{
+    int three = 3, four = 4, five = 5, six = 6;
+    future_t* f_queue;
+    f_queue = future_alloc(FUTURE_QUEUE, sizeof(int), 3);
+
+    resume(create(future_cons, 1024, 20, "fcons6", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons7", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons8", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons9", 1, f_queue));
+    resume(create(future_prod, 1024, 20, "fprod3", 2, f_queue, (char *)&three));
+    resume(create(future_prod, 1024, 20, "fprod4", 2, f_queue, (char *)&four));
+    resume(create(future_prod, 1024, 20, "fprod5", 2, f_queue, (char *)&five));
+    resume(create(future_prod, 1024, 20, "fprod6", 2, f_queue, (char *)&six));
+    sleep(1);
+}
+
+void futureq_test2(int nargs, char *args[])
+{
+    int seven = 7, eight = 8, nine = 9, ten = 10, eleven = 11;
+    future_t *f_queue;
+    f_queue = future_alloc(FUTURE_QUEUE, sizeof(int), 3);
+
+    resume(create(future_prod, 1024, 20, "fprod10", 2, f_queue, (char *)&seven));
+    resume(create(future_prod, 1024, 20, "fprod11", 2, f_queue, (char *)&eight));
+    resume(create(future_prod, 1024, 20, "fprod12", 2, f_queue, (char *)&nine));
+    resume(create(future_prod, 1024, 20, "fprod13", 2, f_queue, (char *)&ten));
+    resume(create(future_prod, 1024, 20, "fprod13", 2, f_queue, (char *)&eleven));
+
+    resume(create(future_cons, 1024, 20, "fcons14", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons15", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons16", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons17", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons18", 1, f_queue));
+    sleep(1);
+}
+
+void futureq_test3(int nargs, char *args[])
+{
+    int three = 3, four = 4, five = 5, six = 6;
+    future_t *f_queue;
+    f_queue = future_alloc(FUTURE_QUEUE, sizeof(int), 3);
+
+    resume(create(future_cons, 1024, 20, "fcons6", 1, f_queue));
+    resume(create(future_prod, 1024, 20, "fprod3", 2, f_queue, (char *)&three));
+    resume(create(future_prod, 1024, 20, "fprod4", 2, f_queue, (char *)&four));
+    resume(create(future_prod, 1024, 20, "fprod5", 2, f_queue, (char *)&five));
+    resume(create(future_prod, 1024, 20, "fprod6", 2, f_queue, (char *)&six));
+    resume(create(future_cons, 1024, 20, "fcons7", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons8", 1, f_queue));
+    resume(create(future_cons, 1024, 20, "fcons9", 1, f_queue));
+    sleep(1);
+}

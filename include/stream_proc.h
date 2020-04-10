@@ -16,3 +16,4 @@ struct stream
 };
 
 extern int32 stream_proc(int nargs, char *args[]);
+extern int32 stream_proc_futures(int nargs, char *args[]);
