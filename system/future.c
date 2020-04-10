@@ -8,7 +8,7 @@ syscall future_set(future_t *f, char *in);
 
 future_t *future_alloc(future_mode_t mode, uint size, uint nelems){
     future_t* fut = (future_t*)getmem(sizeof(future_t));
-    if(fut == (future_t*)SYSERR) return SYSERR;
+    if(fut == (future_t*)SYSERR) return (future_t*)SYSERR;
     fut->state = FUTURE_EMPTY;
     fut->mode = mode;
     fut->size = size;
@@ -165,7 +165,7 @@ syscall future_free(future_t* f){
         restore(mask);
         return SYSERR;
     }
-    if(freemem(f, sizeof(future_t)) == SYSERR){
+    if(freemem((char*)f, sizeof(future_t)) == SYSERR){
         restore(mask);
         return SYSERR;
     }
