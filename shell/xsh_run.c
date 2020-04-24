@@ -217,6 +217,7 @@ void future_fibonacci(int nargs, char *args[]){
 void futures_test(int nargs, char *args[]){
     args++;
     nargs--;
+    // TODO: Add fstest
     if(strncmp("-pc", args[0], 3) == 0){
         resume(create(future_prodcons, 1024, 20, "future_prodcons", 1, NULL));
     }
