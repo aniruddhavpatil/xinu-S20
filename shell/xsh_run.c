@@ -55,7 +55,7 @@ shellcmd xsh_run(int nargs, char *args[])
     else if (strncmp(args[0], "futures_test", 12) == 0) {
         resume(create((void *)futures_test, 4096, 20, "futures_test", 2, nargs, args));
     }
-    else if (strncmp(args[0], "tscdf_fq", 5) == 0)
+    else if (strncmp(args[0], "tscdf_fq", 8) == 0)
     {
         resume(create((void *)stream_proc_futures, 4096, 20, "stream_proc_future", 2, nargs, args));
     }
