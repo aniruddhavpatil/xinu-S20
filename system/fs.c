@@ -398,7 +398,7 @@ int fs_write(int fd, void *buf, int nbytes)
         return SYSERR;
     if (oft[fd].state == FSTATE_CLOSED)
         return SYSERR;
-    if (!(oft[fd].flag == O_WRONLY || oft[fd].flag == O_RDWR))
+    if (oft[fd].flag == O_RDONLY)
         return SYSERR;
 
     if (nbytes <= 0 || (strlen((char *)buf) == 0) || strlen((char *)buf) != nbytes)
@@ -524,6 +524,10 @@ int fs_unlink(char *filename)
     else{
         for(int i = 0; i < in.size; i++){
             fs_clearmaskbit(in.blocks[i]);
+            fsd.root_dir.entry[fd].name[0] = '\0';
+            fsd.root_dir.numentries--;
+            in.nlink--;
+            fs_put_inode_by_num(0, fsd.root_dir.entry[fd].inode_num, &in);
         }
     }
     return OK;
