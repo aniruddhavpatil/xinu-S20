@@ -398,7 +398,7 @@ int fs_write(int fd, void *buf, int nbytes)
         return SYSERR;
     if (oft[fd].state == FSTATE_CLOSED)
         return SYSERR;
-    if (oft[fd].flag == O_RDONLY)
+    if (!(oft[fd].flag == O_WRONLY || oft[fd].flag == O_RDWR))
         return SYSERR;
 
     if (nbytes <= 0 || (strlen((char *)buf) == 0) || strlen((char *)buf) != nbytes)
