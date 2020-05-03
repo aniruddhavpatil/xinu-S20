@@ -17,6 +17,8 @@ void futureq_test3(int nargs, char *args[]);
 int32 stream_proc(int nargs, char *args[]);
 int32 stream_proc_futures(int nargs, char *args[]);
 
+uint fstest(int nargs, char *args[]);
+
 int32 isValidArgument(char *number);
 sid32 producer_sem;
 sid32 consumer_sem;
@@ -61,6 +63,9 @@ shellcmd xsh_run(int nargs, char *args[])
     }
     else if (strncmp(args[0], "tscdf", 5) == 0){
         resume(create((void *)stream_proc, 4096, 20, "stream_proc", 2, nargs, args));
+    }
+    else if (strncmp(args[0], "fstest", 6) == 0){
+        resume(create((void *)fstest, 4096, 20, "fs_test", 2, nargs, args));
     }
     else{
         printf("Given argument does not match any defined functions.\n");
@@ -217,6 +222,7 @@ void future_fibonacci(int nargs, char *args[]){
 void futures_test(int nargs, char *args[]){
     args++;
     nargs--;
+    // TODO: Add fstest
     if(strncmp("-pc", args[0], 3) == 0){
         resume(create(future_prodcons, 1024, 20, "future_prodcons", 1, NULL));
     }
