@@ -254,7 +254,7 @@ int fs_open(char *filename, int mode)
     if (i == n_entries) return SYSERR;
 
     int fd = -1;
-    for (int j = 0; j < NUM_FD; j++)
+    for (int j = 0; j < n_entries; j++)
     {
         if (strcmp(fsd.root_dir.entry[i].name, oft[j].de->name) == 0)
         {
@@ -523,12 +523,12 @@ int fs_unlink(char *filename)
             break;
     }
 
-    kprintf("\nfile_num:%d\n", file_num);
+    // kprintf("\nfile_num:%d\n", file_num);
     int get_inode_status = fs_get_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
     // if (get_inode_status == SYSERR) return SYSERR;
     if (oft[file_num].in.nlink > 1)
     {
-        kprintf("\nUNLINKHere\n");
+        // kprintf("\nUNLINKHere\n");
         // oft[file_num].de->name[0] = '\0';
         fsd.root_dir.numentries--;
         oft[file_num].in.nlink--;
