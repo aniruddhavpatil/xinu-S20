@@ -493,7 +493,7 @@ int fs_link(char *src_filename, char *dst_filename)
     fsd.root_dir.entry[dst_file_num].inode_num = fsd.inodes_used;
     oft[fsd.inodes_used].state = FSTATE_OPEN;
     oft[fsd.inodes_used].in = src_in;
-    oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
+    oft[fsd.inodes_used].de = &fsd.root_dir.entry[src_file_num];
     oft[fsd.inodes_used].flag = O_RDWR;
     oft[fsd.inodes_used].fileptr = 0;
     fsd.root_dir.numentries++;
@@ -515,16 +515,16 @@ int fs_unlink(char *filename)
     }
     if (file_num == n_entries) return SYSERR;
     // Close file before unlinking???
-    // int fd = -1;
-    // for (int j = 0; j < NUM_FD; j++)
-    // {
-    //     if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
-    //     {
-    //         fd = j;
-    //         break;
-    //     }
-    // }
-    // if (fd >= 0 && fd <= NUM_FD) oft[fd].state = FSTATE_CLOSED;
+    int fd = -1;
+    for (int j = 0; j < NUM_FD; j++)
+    {
+        if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
+        {
+            fd = j;
+            break;
+        }
+    }
+    if (fd >= 0 && fd <= NUM_FD) oft[fd].state = FSTATE_CLOSED;
     struct inode in;
     int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
     if (get_inode_status == SYSERR) return SYSERR;
