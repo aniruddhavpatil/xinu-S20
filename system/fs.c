@@ -515,15 +515,15 @@ int fs_unlink(char *filename)
     }
     if (file_num == n_entries) return SYSERR;
     // Close file before unlinking???
-    int fd = -1;
-    for (int j = 0; j < NUM_FD; j++)
-    {
-        if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
-        {
-            fd = j;
-            break;
-        }
-    }
+    // int fd = -1;
+    // for (int j = 0; j < NUM_FD; j++)
+    // {
+    //     if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
+    //     {
+    //         fd = j;
+    //         break;
+    //     }
+    // }
     if (fd >= 0 && fd <= NUM_FD) oft[fd].state = FSTATE_CLOSED;
     struct inode in;
     int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
