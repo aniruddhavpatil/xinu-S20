@@ -476,6 +476,7 @@ int fs_link(char *src_filename, char *dst_filename)
     // if (fsd.inodes_used >= fsd.ninodes) return SYSERR;
     
     struct inode src_in;
+    int temp = fsd.root_dir.entry[src_file_num].inode_num;
     int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
     if (get_inode_status == SYSERR) return SYSERR;
 
@@ -485,7 +486,7 @@ int fs_link(char *src_filename, char *dst_filename)
     int put_inode_status = fs_put_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
     if (put_inode_status == SYSERR) return SYSERR;
 
-    put_inode_status = fs_put_inode_by_num(0, dst_file_num, &src_in);
+    // put_inode_status = fs_put_inode_by_num(0, dst_file_num, &src_in);
     // strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
     // fsd.root_dir.entry[dst_file_num].inode_num = dst_file_num;
     // oft[fsd.inodes_used].state = FSTATE_OPEN;
@@ -496,12 +497,12 @@ int fs_link(char *src_filename, char *dst_filename)
     // fsd.root_dir.numentries++;
 
     strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
-    fsd.root_dir.entry[n_entries].inode_num = n_entries;
-    oft[fsd.inodes_used].state = FSTATE_OPEN;
-    oft[fsd.inodes_used].in = src_in;
-    oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
-    oft[fsd.inodes_used].flag = O_RDWR;
-    oft[fsd.inodes_used].fileptr = 0;
+    fsd.root_dir.entry[n_entries].inode_num = temp;
+    // oft[fsd.inodes_used].state = FSTATE_OPEN;
+    // oft[fsd.inodes_used].in = src_in;
+    // oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
+    // oft[fsd.inodes_used].flag = O_RDWR;
+    // oft[fsd.inodes_used].fileptr = 0;
     fsd.root_dir.numentries++;
 
     return OK;
