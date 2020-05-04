@@ -486,8 +486,8 @@ int fs_link(char *src_filename, char *dst_filename)
     if (put_inode_status == SYSERR) return SYSERR;
 
     put_inode_status = fs_put_inode_by_num(0, dst_file_num, &src_in);
-    strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
-    fsd.root_dir.entry[dst_file_num].inode_num = dst_file_num;
+    // strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
+    // fsd.root_dir.entry[dst_file_num].inode_num = dst_file_num;
     // oft[fsd.inodes_used].state = FSTATE_OPEN;
     // oft[fsd.inodes_used].in = src_in;
     // oft[fsd.inodes_used].de = &fsd.root_dir.entry[dst_file_num];
@@ -495,13 +495,13 @@ int fs_link(char *src_filename, char *dst_filename)
     // oft[fsd.inodes_used].fileptr = 0;
     // fsd.root_dir.numentries++;
 
-    // strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
-    // fsd.root_dir.entry[n_entries].inode_num = n_entries;
-    // oft[fsd.inodes_used].state = FSTATE_OPEN;
-    // oft[fsd.inodes_used].in = src_in;
-    // oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
-    // oft[fsd.inodes_used].flag = O_RDWR;
-    // oft[fsd.inodes_used].fileptr = 0;
+    strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
+    fsd.root_dir.entry[n_entries].inode_num = n_entries;
+    oft[fsd.inodes_used].state = FSTATE_CLOSED;
+    oft[fsd.inodes_used].in = src_in;
+    oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
+    oft[fsd.inodes_used].flag = O_RDWR;
+    oft[fsd.inodes_used].fileptr = 0;
     fsd.root_dir.numentries++;
 
     return OK;
@@ -517,7 +517,7 @@ int fs_unlink(char *filename)
         if (strcmp(filename, fsd.root_dir.entry[file_num].name) == 0)
             break;
     }
-    if (file_num == n_entries) return SYSERR;
+    // if (file_num == n_entries) return SYSERR;
     // Close file before unlinking???
     // int fd = -1;
     // for (int j = 0; j < NUM_FD; j++)
