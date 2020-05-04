@@ -491,11 +491,11 @@ int fs_link(char *src_filename, char *dst_filename)
     // put_inode_status = fs_put_inode_by_num(0, src_file_num, &src_in);
     strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
     fsd.root_dir.entry[dst_file_num].inode_num = fsd.inodes_used;
-    // oft[fsd.inodes_used].state = FSTATE_OPEN;
-    // oft[fsd.inodes_used].in = src_in;
-    // oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
-    // oft[fsd.inodes_used].flag = O_RDWR;
-    // oft[fsd.inodes_used].fileptr = 0;
+    oft[fsd.inodes_used].state = FSTATE_OPEN;
+    oft[fsd.inodes_used].in = src_in;
+    oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
+    oft[fsd.inodes_used].flag = O_RDWR;
+    oft[fsd.inodes_used].fileptr = 0;
     fsd.root_dir.numentries++;
 
     
@@ -530,9 +530,8 @@ int fs_unlink(char *filename)
     if (get_inode_status == SYSERR) return SYSERR;
     if (in.nlink > 1){
         // fsd.root_dir.entry[file_num].name[0] = '\0';
-        // fsd.root_dir.numentries--;
+        fsd.root_dir.numentries--;
         in.nlink--;
-
         fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
     }
     else if (in.nlink == 1) {
