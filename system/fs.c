@@ -481,7 +481,7 @@ int fs_link(char *src_filename, char *dst_filename)
 
     src_in.nlink++;
 
-    int put_inode_status = fs_put_inode_by_num(0, ++fsd.inodes_used, &src_in);
+    int put_inode_status = fs_put_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
     if (put_inode_status == SYSERR) return SYSERR;
 
     // Update src inode???
@@ -514,16 +514,17 @@ int fs_unlink(char *filename)
             break;
     }
     if (file_num == n_entries) return SYSERR;
-    int fd = -1;
-    for (int j = 0; j < NUM_FD; j++)
-    {
-        if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
-        {
-            fd = j;
-            break;
-        }
-    }
-    if (fd >= 0 && fd <= NUM_FD) oft[fd].state = FSTATE_CLOSED;
+    // Close file before unlinking???
+    // int fd = -1;
+    // for (int j = 0; j < NUM_FD; j++)
+    // {
+    //     if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
+    //     {
+    //         fd = j;
+    //         break;
+    //     }
+    // }
+    // if (fd >= 0 && fd <= NUM_FD) oft[fd].state = FSTATE_CLOSED;
     struct inode in;
     int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
     if (get_inode_status == SYSERR) return SYSERR;
@@ -534,7 +535,7 @@ int fs_unlink(char *filename)
 
         fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
     }
-    else{
+    else if (in.nlink == 1) {
         for(int i = 0; i < in.size; i++){
             fs_clearmaskbit(in.blocks[i]);
             fsd.root_dir.entry[file_num].name[0] = '\0';
@@ -543,6 +544,8 @@ int fs_unlink(char *filename)
             fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
         }
     }
+    else return SYSERR;
+
     return OK;
 }
 #endif /* FS */
