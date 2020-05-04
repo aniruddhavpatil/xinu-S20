@@ -485,8 +485,8 @@ int fs_link(char *src_filename, char *dst_filename)
     if (put_inode_status == SYSERR) return SYSERR;
 
     // Update src inode???
-    // put_inode_status = fs_put_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
-    // if (put_inode_status == SYSERR) return SYSERR;
+    put_inode_status = fs_put_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
+    if (put_inode_status == SYSERR) return SYSERR;
 
     // put_inode_status = fs_put_inode_by_num(0, src_file_num, &src_in);
     strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
