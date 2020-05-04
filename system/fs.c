@@ -404,16 +404,16 @@ int fs_write(int fd, void *buf, int nbytes)
     // if (nbytes <= 0 || (strlen((char *)buf) == 0) || strlen((char *)buf) != nbytes)
         // return SYSERR;
 
-    struct inode tempiNode;
-    if (oft[fd].in.size > 0)
-    {
-        // tempiNode = oft[fd].in;
-        while(oft[fd].in.size--)
-        {
-            if (fs_clearmaskbit(oft[fd].in.blocks[oft[fd].in.size - 1]) != OK)
-                return SYSERR;
-        }
-    }
+    // struct inode tempiNode;
+    // if (oft[fd].in.size > 0)
+    // {
+    //     // tempiNode = oft[fd].in;
+    //     while(oft[fd].in.size--)
+    //     {
+    //         if (fs_clearmaskbit(oft[fd].in.blocks[oft[fd].in.size - 1]) != OK)
+    //             return SYSERR;
+    //     }
+    // }
 
     int blocksToWrite = nbytes / MDEV_BLOCK_SIZE;
     if (nbytes % MDEV_BLOCK_SIZE) blocksToWrite++;
