@@ -467,10 +467,10 @@ int fs_link(char *src_filename, char *dst_filename)
         if (strcmp(src_filename, fsd.root_dir.entry[src_file_num].name) == 0) 
             break;
 
-    int dst_file_num = 0;
-    for (; dst_file_num < n_entries; dst_file_num++)
-        if (strcmp(dst_filename, fsd.root_dir.entry[dst_file_num].name) == 0)
-            break;
+    // int dst_file_num = 0;
+    // for (; dst_file_num < n_entries; dst_file_num++)
+    //     if (strcmp(dst_filename, fsd.root_dir.entry[dst_file_num].name) == 0)
+    //         break;
     // fsd overflow???
     // if (dst_file_num != n_entries) return SYSERR;
     // if (fsd.inodes_used >= fsd.ninodes) return SYSERR;
@@ -489,16 +489,23 @@ int fs_link(char *src_filename, char *dst_filename)
     if (put_inode_status == SYSERR) return SYSERR;
 
     // put_inode_status = fs_put_inode_by_num(0, src_file_num, &src_in);
-    strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
-    fsd.root_dir.entry[dst_file_num].inode_num = fsd.inodes_used;
+    // strcpy(fsd.root_dir.entry[dst_file_num].name, dst_filename);
+    // fsd.root_dir.entry[dst_file_num].inode_num = fsd.inodes_used;
+    // oft[fsd.inodes_used].state = FSTATE_OPEN;
+    // oft[fsd.inodes_used].in = src_in;
+    // oft[fsd.inodes_used].de = &fsd.root_dir.entry[dst_file_num];
+    // oft[fsd.inodes_used].flag = O_RDWR;
+    // oft[fsd.inodes_used].fileptr = 0;
+    // fsd.root_dir.numentries++;
+
+    strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
+    fsd.root_dir.entry[n_entries].inode_num = n_entries;
     oft[fsd.inodes_used].state = FSTATE_OPEN;
     oft[fsd.inodes_used].in = src_in;
-    oft[fsd.inodes_used].de = &fsd.root_dir.entry[dst_file_num];
+    oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
     oft[fsd.inodes_used].flag = O_RDWR;
     oft[fsd.inodes_used].fileptr = 0;
     fsd.root_dir.numentries++;
-
-    
 
     return OK;
 }
