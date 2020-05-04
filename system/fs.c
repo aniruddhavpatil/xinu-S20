@@ -237,11 +237,11 @@ void fs_printfreemask(void)
     printf("\n");
 }
 
-int fs_open(char *filename, int mode)
+int fs_open(char *filename, int flags)
 {
     if (strlen(filename) == 0)
         return SYSERR;
-
+    if (flags != O_RDWR && flags != O_WRONLY && flags != O_RDONLY){return SYSERR;}
     int i = 0;
     int n_entries = fsd.root_dir.numentries;
     for (; i < n_entries; i++)
@@ -270,7 +270,7 @@ int fs_open(char *filename, int mode)
 
     oft[fd].fileptr = 0;
     oft[fd].in = in;
-    oft[fd].flag = mode;
+    oft[fd].flag = flags;
     oft[fd].de = &fsd.root_dir.entry[i];
     oft[fd].state = FSTATE_OPEN;
 
