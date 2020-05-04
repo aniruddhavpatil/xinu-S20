@@ -368,8 +368,8 @@ int fs_read(int fd, void *buf, int nbytes)
 
     nbytes += oft[fd].fileptr;
     int blocksToRead = nbytes / MDEV_BLOCK_SIZE;
-    if ((nbytes % MDEV_BLOCK_SIZE) != 0)
-        blocksToRead++;
+    if ((nbytes % MDEV_BLOCK_SIZE) != 0) blocksToRead++;
+
     if (oft[fd].in.size < blocksToRead)
         blocksToRead = oft[fd].in.size;
 
@@ -401,16 +401,16 @@ int fs_write(int fd, void *buf, int nbytes)
     if (oft[fd].flag == O_RDONLY)
         return SYSERR;
 
-    if (nbytes <= 0 || (strlen((char *)buf) == 0) || strlen((char *)buf) != nbytes)
-        return SYSERR;
+    // if (nbytes <= 0 || (strlen((char *)buf) == 0) || strlen((char *)buf) != nbytes)
+        // return SYSERR;
 
     struct inode tempiNode;
     if (oft[fd].in.size > 0)
     {
-        tempiNode = oft[fd].in;
+        // tempiNode = oft[fd].in;
         while(oft[fd].in.size--)
         {
-            if (fs_clearmaskbit(tempiNode.blocks[oft[fd].in.size - 1]) != OK)
+            if (fs_clearmaskbit(oft[fd].in.blocks[oft[fd].in.size - 1]) != OK)
                 return SYSERR;
         }
     }
