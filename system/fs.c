@@ -529,7 +529,7 @@ int fs_unlink(char *filename)
     int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
     if (get_inode_status == SYSERR) return SYSERR;
     if (in.nlink > 1){
-        fsd.root_dir.entry[file_num].name[0] = '\0';
+        // fsd.root_dir.entry[file_num].name[0] = '\0';
         fsd.root_dir.numentries--;
         in.nlink--;
         fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
@@ -537,11 +537,11 @@ int fs_unlink(char *filename)
     else if (in.nlink == 1) {
         for(int i = 0; i < in.size; i++){
             fs_clearmaskbit(in.blocks[i]);
-            fsd.root_dir.entry[file_num].name[0] = '\0';
-            fsd.root_dir.numentries--;
-            in.nlink--;
-            fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
         }
+        // fsd.root_dir.entry[file_num].name[0] = '\0';
+        fsd.root_dir.numentries--;
+        in.nlink--;
+        fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
     }
     else return SYSERR;
 
