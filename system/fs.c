@@ -464,13 +464,13 @@ int fs_link(char *src_filename, char *dst_filename)
     int n_entries = fsd.root_dir.numentries;
     int src_file_num = 0;
     for (; src_file_num < n_entries; src_file_num++)
-        if (strcmp(src_filename, fsd.root_dir.entry[src_file_num].name) == 0) 
+        if (strcmp(src_filename, oft[src_file_num].de->name) == 0)
             break;
 
-    int dst_file_num = 0;
-    for (; dst_file_num < n_entries; dst_file_num++)
-        if (strcmp(dst_filename, fsd.root_dir.entry[dst_file_num].name) == 0)
-            break;
+    // int dst_file_num = 0;
+    // for (; dst_file_num < n_entries; dst_file_num++)
+    //     if (strcmp(dst_filename, oft[file_num].de->name) == 0)
+    //         break;
     // fsd overflow???
     // if (dst_file_num != n_entries) return SYSERR;
     // if (fsd.inodes_used >= fsd.ninodes) return SYSERR;
@@ -528,11 +528,12 @@ int fs_unlink(char *filename)
     // if (get_inode_status == SYSERR) return SYSERR;
     if (oft[file_num].in.nlink > 1)
     {
+        kprintf("\nUNLINKHere\n");
         oft[file_num].de->name[0] = '\0';
         fsd.root_dir.numentries--;
         oft[file_num].in.nlink--;
         fs_put_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
-        return OK;
+        // return OK;
     }
     else if (oft[file_num].in.nlink == 1)
     {
