@@ -497,7 +497,7 @@ int fs_link(char *src_filename, char *dst_filename)
 
     strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
     fsd.root_dir.entry[n_entries].inode_num = n_entries;
-    oft[fsd.inodes_used].state = FSTATE_CLOSED;
+    oft[fsd.inodes_used].state = FSTATE_OPEN;
     oft[fsd.inodes_used].in = src_in;
     oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
     oft[fsd.inodes_used].flag = O_RDWR;
