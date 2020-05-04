@@ -476,14 +476,15 @@ int fs_link(char *src_filename, char *dst_filename)
     // if (fsd.inodes_used >= fsd.ninodes) return SYSERR;
     
     struct inode src_in;
-    int temp = fsd.root_dir.entry[src_file_num].inode_num;
-    int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
+    int temp = oft[src_file_num].de->inode_num;
+    int get_inode_status = fs_get_inode_by_num(0, temp, &oft[src_file_num].in);
     if (get_inode_status == SYSERR) return SYSERR;
-
-    src_in.nlink++;
+    // kprintf("Src_file_num: %d\n", src_file_num);
+    // src_in.nlink++;
+    oft[src_file_num].in.nlink += 1;
 
     // Update src inode???
-    int put_inode_status = fs_put_inode_by_num(0, fsd.root_dir.entry[src_file_num].inode_num, &src_in);
+    int put_inode_status = fs_put_inode_by_num(0, temp, &oft[src_file_num].in);
     if (put_inode_status == SYSERR) return SYSERR;
 
     // put_inode_status = fs_put_inode_by_num(0, dst_file_num, &src_in);
@@ -496,8 +497,11 @@ int fs_link(char *src_filename, char *dst_filename)
     // oft[fsd.inodes_used].fileptr = 0;
     // fsd.root_dir.numentries++;
 
-    strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
-    fsd.root_dir.entry[n_entries].inode_num = temp;
+    // strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
+    strcpy(oft[n_entries].de->name, dst_filename);
+
+    // fsd.root_dir.entry[n_entries].inode_num = temp;
+    oft[n_entries].de->inode_num = temp;
     // oft[fsd.inodes_used].state = FSTATE_OPEN;
     // oft[fsd.inodes_used].in = src_in;
     // oft[fsd.inodes_used].de = &fsd.root_dir.entry[n_entries];
@@ -515,41 +519,34 @@ int fs_unlink(char *filename)
     
     for (; file_num < n_entries; file_num++)
     {
-        if (strcmp(filename, fsd.root_dir.entry[file_num].name) == 0)
+        if (strcmp(filename, oft[file_num].de->name) == 0)
             break;
     }
-    // if (file_num == n_entries) return SYSERR;
-    // Close file before unlinking???
-    int fd = -1;
-    for (int j = 0; j < NUM_FD; j++)
+
+    kprintf("\nfile_num:%d\n", file_num);
+    int get_inode_status = fs_get_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
+    // if (get_inode_status == SYSERR) return SYSERR;
+    if (oft[file_num].in.nlink > 1)
     {
-        if (strcmp(fsd.root_dir.entry[file_num].name, oft[j].de->name) == 0)
+        oft[file_num].de->name[0] = '\0';
+        fsd.root_dir.numentries--;
+        oft[file_num].in.nlink--;
+        fs_put_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
+        return OK;
+    }
+    else if (oft[file_num].in.nlink == 1)
+    {
+        for (int i = 0; i < oft[file_num].in.size; i++)
         {
-            fd = j;
-            break;
+            fs_clearmaskbit(oft[file_num].in.blocks[i]);
         }
-    }
-    if (fd >= 0 && fd <= NUM_FD) oft[fd].state = FSTATE_CLOSED;
-    struct inode in;
-    int get_inode_status = fs_get_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
-    if (get_inode_status == SYSERR) return SYSERR;
-    if (in.nlink > 1){
-        fsd.root_dir.entry[file_num].name[0] = '\0';
+        oft[file_num].in.size = 0;
+        oft[file_num].de->name[0] = '\0';
         fsd.root_dir.numentries--;
-        in.nlink--;
-        fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
+        oft[file_num].in.nlink = 0;
+        fs_put_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
     }
-    else if (in.nlink == 1) {
-        for(int i = 0; i < in.size; i++){
-            fs_clearmaskbit(in.blocks[i]);
-        }
-        in.size = 0;
-        fsd.root_dir.entry[file_num].name[0] = '\0';
-        fsd.root_dir.numentries--;
-        in.nlink = 0;
-        fs_put_inode_by_num(0, fsd.root_dir.entry[file_num].inode_num, &in);
-    }
-    else return SYSERR;
+    // else return SYSERR;
 
     return OK;
 }
