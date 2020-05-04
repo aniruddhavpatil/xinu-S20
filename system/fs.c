@@ -493,7 +493,7 @@ int fs_link(char *src_filename, char *dst_filename)
     fsd.root_dir.entry[dst_file_num].inode_num = fsd.inodes_used;
     oft[fsd.inodes_used].state = FSTATE_OPEN;
     oft[fsd.inodes_used].in = src_in;
-    oft[fsd.inodes_used].de = &fsd.root_dir.entry[src_file_num];
+    oft[fsd.inodes_used].de = &fsd.root_dir.entry[dst_file_num];
     oft[fsd.inodes_used].flag = O_RDWR;
     oft[fsd.inodes_used].fileptr = 0;
     fsd.root_dir.numentries++;
