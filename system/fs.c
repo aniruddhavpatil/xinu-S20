@@ -542,7 +542,7 @@ int fs_unlink(char *filename)
         for(int i = 0; i < in.size; i++){
             fs_clearmaskbit(in.blocks[i]);
         }
-        in.size = 0
+        in.size = 0;
         fsd.root_dir.entry[file_num].name[0] = '\0';
         fsd.root_dir.numentries--;
         in.nlink = 0;
