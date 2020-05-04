@@ -529,7 +529,7 @@ int fs_unlink(char *filename)
     if (oft[file_num].in.nlink > 1)
     {
         kprintf("\nUNLINKHere\n");
-        oft[file_num].de->name[0] = '\0';
+        // oft[file_num].de->name[0] = '\0';
         fsd.root_dir.numentries--;
         oft[file_num].in.nlink--;
         fs_put_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
@@ -542,7 +542,7 @@ int fs_unlink(char *filename)
             fs_clearmaskbit(oft[file_num].in.blocks[i]);
         }
         oft[file_num].in.size = 0;
-        oft[file_num].de->name[0] = '\0';
+        // oft[file_num].de->name[0] = '\0';
         fsd.root_dir.numentries--;
         oft[file_num].in.nlink = 0;
         fs_put_inode_by_num(0, oft[file_num].de->inode_num, &oft[file_num].in);
