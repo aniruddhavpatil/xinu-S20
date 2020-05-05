@@ -548,7 +548,7 @@ int fs_unlink(char *filename)
 
     for (; i <= fsd.root_dir.numentries; i++)
     {
-        if (strcmp(fsd.root_dir.entry[i].name, filename) == 0)
+        if (strncmp(fsd.root_dir.entry[i].name, filename, FILENAMELEN) == 0)
         {
             temp_inode_num = fsd.root_dir.entry[i].inode_num;
             fileEntry = i;
