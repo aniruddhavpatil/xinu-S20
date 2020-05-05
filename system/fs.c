@@ -567,13 +567,13 @@ int fs_unlink(char *filename)
     {
         if (in.nlink == 1)
         {
-            int j = 0;
             int blocks = in.size / MDEV_BLOCK_SIZE;
             if (in.size % MDEV_BLOCK_SIZE != 0)
                 ++blocks;
 
-            while (j < blocks)
-                fs_clearmaskbit(in.blocks[j++]);
+            int j = 0;
+            for (; j < blocks; j++)
+                fs_clearmaskbit(in.blocks[j]);
             --fsd.inodes_used;
         }
         --in.nlink;
@@ -583,7 +583,7 @@ int fs_unlink(char *filename)
     else
         return SYSERR;
     int k = 0;
-    while (k < NUM_FD)
+    for (; k < NUM_FD; k++)
     {
         if (fileEntry != -1 && oft[k].de->inode_num == fsd.root_dir.entry[fileEntry].inode_num)
         {
@@ -593,20 +593,19 @@ int fs_unlink(char *filename)
                 break;
             }
         }
-        ++k;
     }
     k = i;
-    while (k < fsd.root_dir.numentries)
+    for (; k < fsd.root_dir.numentries; k++)
     {
         fsd.root_dir.entry[k] = fsd.root_dir.entry[k + 1];
         // kprintf("\nK in unlink is %d\n", k);
-        ++k;
     }
     --fsd.root_dir.numentries;
     --fsd.root_dir.entry[fileEntry].inode_num;
 
     return OK;
 }
+
 int error_handler(const char* error_message){
     printf("%s\n", error_message);
     return SYSERR;
