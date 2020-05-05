@@ -282,6 +282,9 @@ int fs_open(char *filename, int flags)
     if (i >= NUM_FD)
         return error_handler("Error in fs_open");
 
+    if (fs_get_inode_by_num(0, oft[i].in.id, &in) == SYSERR)
+        return SYSERR;
+
     oft[i].fileptr = 0;
     oft[i].de = &fsd.root_dir.entry[entryNode];
     oft[i].flag = flags;
@@ -524,7 +527,7 @@ int fs_link(char *src_filename, char *dst_filename)
     strcpy(fsd.root_dir.entry[n_entries].name, dst_filename);
 
     struct inode in;
-    fsd.root_dir.numentries = ++n_entries;
+    ++fsd.root_dir.numentries;
 
     if (fs_get_inode_by_num(0, temp_inode_num, &in) != SYSERR)
     {
